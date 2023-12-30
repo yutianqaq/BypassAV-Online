@@ -1,0 +1,10 @@
+bypassav:
+  templatesDirectory: /home/kali/bypassAVOnline/template/
+  templateCMapping:
+    v1: v1.c
+  templateNIMMapping:
+    v1: v1.nim
+  compilerC: x86_64-w64-mingw32-gcc
+  compilerNIM: nim
+  storageDirector: /home/kali/bypassAVOnline/download
+
