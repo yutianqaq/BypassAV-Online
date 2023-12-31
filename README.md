@@ -6,7 +6,7 @@
 
 
 ## 演示
-![demo2](README.assets/demo2.gif)
+![image-20231230225022661](README.assets/image-20231230225022661.png)
 
 # 快速体验
 
@@ -19,7 +19,11 @@ cd bypassAVOnline
 
 curl https://nim-lang.org/choosenim/init.sh -sSf | sh
 # 输入 y
-export PATH=/home/kali/.nimble/bin:$PATH
+echo "PATH=/home/kali/.nimble/bin:$PATH" >> ~/.zshrc
+source ~/.zshrc
+
+# winim 依赖
+nimble install winim
 
 sudo apt install mingw-w64
 
@@ -136,11 +140,80 @@ wget http://localhost:8080/v1/download/c7af340b-8358-44a3-9985-82189468c36d.exe
 
 
 
+## 前端页面部署
+
+修改 `.env.production` 中的内容
+
+```
+# 线上环境
+NODE_ENV = 'production'
+
+# 暴露必须以VITE开头才能被Vite识别
+
+VITE_BASE_API = '/api'
+
+# 线上环境接口地址
+VITE_API_URL = 'http://ip:port/'
+
+```
+
+![image-20231230211045449](README.assets/image-20231230211045449.png)
+
+然后输入 `yarn build`，输入以下命令，复制到 Apache 目录
+
+```
+sudo cp -r dist/assets dist/index.html dist/logo.ico /var/www/html/
+sudo chown -R www-data:www-data /var/www/html
+```
+
+输入以下命令，开启模块
+
+```
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod rewrite
+```
+
+编辑 `/etc/apache2/sites-available/000-default.conf` 增加以下配置
+
+```
+        ProxyPass /api http://localhost:8080
+        ProxyPassReverse /api http://localhost:8080
+        <Directory /var/www/html>
+                Options Indexes FollowSymLinks
+                AllowOverride All
+                Require all granted
+        </Directory>
+
+```
+
+![image-20231230213427998](README.assets/image-20231230213427998.png)
+
+重启 Apache 服务器
+
+```
+sudo systemctl restart apache2
+```
+
+至此完成后端，前端配置
+
+
+
+![demo](README.assets/demo2.gif)
+
+
+
 
 # TODO
 - [ ] 优化前端交互
 - [ ] 增加更多模板
 - [ ] 增加免杀性
+
+
+
+# 参考
+
+Vue 基础模板：https://github.com/wsheeny/vite-vue-template
 
 ## 开发日志
 
