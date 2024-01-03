@@ -16,3 +16,10 @@ export function fetchDownloadLink(endpoint) {
 })
 }
 
+export function fetchCompileUpload(endpoint, data) {
+  return request({
+    url: `/v1/${endpoint}`,
+    method: 'post',
+    data,
+  })
+}
