@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1>在线免杀生成平台 By T00ls.Net</h1>
+    <h1>在线免杀生成平台</h1>
 
     <div class="logo-section">
       <img src="@/assets/logo1.png" alt="Logo" />
@@ -14,7 +14,7 @@
       <div class="button-section">
       </div>
       <div v-if="elementToShow === 1">
-        <el-upload class="upload-demo" ref="uploadRef" action="" :limit="1" drag :auto-upload="false" :show-file-list="false" method="post"
+        <el-upload class="upload-demo" ref="uploadRef" action="" :limit="1" drag :auto-upload="false" :show-file-list="true" method="post"
           :multiple="true" :http-request="handleUpload">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
@@ -22,7 +22,7 @@
           </div>
           <template #tip>
             <div class="el-upload__tip">
-              bin 限制 500 kb
+              bin 限制 1 mb
             </div>
           </template>
         </el-upload>
@@ -32,12 +32,14 @@
             <el-option label="c" value="c"></el-option>
           </el-select>
           <el-select class="custom-input2" v-if="showSecondSelect" v-model="selectedTemplate" placeholder="选择免杀方式">
-            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - 1" value="v1"></el-option>
-            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - xLdr" value="v2"></el-option>
-            <el-option v-if="selectedLanguage === 'c'" label="C加载器 - 1" value="v1"></el-option>
+            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - x2Ldr" value="v2"></el-option>
+            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - Test" value="v1"></el-option>
+            <el-option v-if="selectedLanguage === 'c'" label="C加载器 - Test" value="v1"></el-option>
           </el-select>
         </div>
-        <el-button class="button-section" @click="submitUpload" :disabled="selectedLanguage === ''">Compile</el-button>
+        <el-button class="button-section" @click="submitUpload" 
+        :disabled="(selectedLanguage === '' || selectedTemplate === '')">Compile
+        </el-button>
       </div>
 
       <div v-if="elementToShow === 2">
@@ -51,13 +53,13 @@
             <el-option label="c" value="c"></el-option>
           </el-select>
           <el-select class="custom-input2" v-if="showSecondSelect" v-model="selectedTemplate" placeholder="选择免杀方式">
-            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - 1" value="v1"></el-option>
-            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - xLdr" value="v2"></el-option>
-            <el-option v-if="selectedLanguage === 'c'" label="C加载器 - 1" value="v1"></el-option>
+            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - x2Ldr" value="v2"></el-option>
+            <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - Test" value="v1"></el-option>
+            <el-option v-if="selectedLanguage === 'c'" label="C加载器 - Test" value="v1"></el-option>
           </el-select>
         </div>
         <el-button class="button-section" @click="handleCompile"
-          :disabled="selectedLanguage === '' || selectedTemplate === ''">Compile</el-button>
+        :disabled="!(selectedLanguage === '' || selectedTemplate !== '')">Compile</el-button>
       </div>
 
       <div v-if="elementToShow === 3">
@@ -86,10 +88,10 @@ import { ElNotification, ElUpload, } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue';
 import { ref } from 'vue'
 
-const open1 = () => {
+const open1 = (msg) => {
   ElNotification({
     title: 'Success',
-    message: '生成中，请等待...',
+    message: msg,
     type: 'success',
   })
 }
@@ -121,6 +123,7 @@ export default {
     const uploadRef = ref(null);
 
     const submitUpload = () => {
+      open1('生成中，请等待下载按钮亮起');
       uploadRef.value.submit();
     };
 
@@ -151,6 +154,7 @@ export default {
       try {
         const response = await fetchCompile(endpoint, data);
         this.compilationResult = response.data.data.downloadLink;
+        open1('生成完成...');
       } catch (error) {
         this.compilationResult = `Error: ${error.message}`;
       }
@@ -161,14 +165,13 @@ export default {
         let shellcode = '';
         if (match) {
           shellcode = match[1];
-          console.log(shellcode);
-          console.log(match);
         } else {
           open4();
           return;
         }
 
         const cleanedCode = shellcode.replace(/(\r\n|\n|\r)/gm, '');
+        open1('生成中，请等待下载按钮亮起');
         this.fetchCompileData(`compile${this.selectedLanguage.toUpperCase()}`, {
           code: cleanedCode,
           templateName: this.selectedTemplate,
@@ -193,6 +196,7 @@ export default {
           });
 
           this.compilationResult = response.data.data.downloadLink;
+          open1('生成完成...');
         } catch (error) {
           console.error('Error:', error);
         }
@@ -289,11 +293,16 @@ export default {
 }
 
 .custom-input2 {
+  margin: 10px;
   width: 480px;
 }
 
-.select-section,
-.button-section,
+.select-section {
+  margin: 10px;
+}
+.button-section{
+  margin: 10px;
+}
 .result-section {
   margin-bottom: 40px;
 }
