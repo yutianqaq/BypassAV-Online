@@ -5,14 +5,14 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
 
-public class TextFileProcessorTest {
+public class TextFileProcessorTests {
     @Test
     public void testGenerateRandomKey() {
         int keyLength = 8;
         byte[] key = TextFileProcessor.generateRandomString(keyLength).getBytes();
         System.out.println("Random Key: " + TextFileProcessor.convertToHexStringWithPrefix(key));
+
     }
 
     @Test

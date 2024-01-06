@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 
-import static com.yutian4090.bypass.utils.FileService.*;
+import static com.yutian4090.bypass.utils.FileProcessor.*;
 
 @RestController
 public class CodeController {
@@ -76,7 +76,6 @@ public class CodeController {
 
         String selectedTemplate = compileNIM.getTemplateName();
         String templateFileName = applicationProperties.getTemplateNIMMapping().get(selectedTemplate);
-        System.out.println(compileNIM);
         if (templateFileName == null) {
             return Result.error("未找到");
         } else {

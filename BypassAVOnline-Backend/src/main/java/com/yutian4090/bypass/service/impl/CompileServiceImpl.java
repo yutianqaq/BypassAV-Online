@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-import static com.yutian4090.bypass.utils.FileService.saveFile;
+import static com.yutian4090.bypass.utils.FileProcessor.saveFile;
 
 @Service
 public class CompileServiceImpl implements CompileService {
@@ -21,7 +21,7 @@ public class CompileServiceImpl implements CompileService {
         saveFile(compilationResult.getFileBytes(), compilationResult.getFileName());
 
 
-        String downloadLink = "/download/" + compilationResult.getFileName();
+        String downloadLink = "download/" + compilationResult.getFileName();
         CompilationResponseDTO result = new CompilationResponseDTO();
 
         result.setDownloadLink(downloadLink);
@@ -31,10 +31,10 @@ public class CompileServiceImpl implements CompileService {
     @Override
     public CompilationResponseDTO compileCodeNIM(CompileRequestDTO request) throws IOException {
         CompilationResult compilationResult = CodeCompilationUtils.compileNimCode(request.getCode(), request.getTemplateName());
-        saveFile(compilationResult.getFileBytes(), compilationResult.getFileName());
+        String Filename = saveFile(compilationResult.getFileBytes(), compilationResult.getFileName());
 
 
-        String downloadLink = "/download/" + compilationResult.getFileName();
+        String downloadLink = "download/" + Filename;
         CompilationResponseDTO result = new CompilationResponseDTO();
 
         result.setDownloadLink(downloadLink);
