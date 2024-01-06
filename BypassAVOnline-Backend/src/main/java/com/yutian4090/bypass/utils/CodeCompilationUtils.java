@@ -76,7 +76,7 @@ public class CodeCompilationUtils {
 
         // nim c -d=release --cc:gcc --app=gui --cpu=amd64 -o:x1.exe x1Ldr.nim
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(applicationProperties.getCompilerNIM(), "c", "-d=release", "-d=mingw", "--app=gui",
+            ProcessBuilder processBuilder = new ProcessBuilder(applicationProperties.getCompilerNIM(), "c", "-d=release", "-d=mingw", "--app=gui", "-d:strip", "--opt:size",
                     "--cpu=amd64", "-o:" + compiledFileName, tempFile.getAbsolutePath());
             List<String> command = processBuilder.command();
 
