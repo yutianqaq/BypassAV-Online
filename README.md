@@ -2,17 +2,31 @@
 
 # BypassAV-Online
 
-一个基于 Spring Boot 的在线免杀生成平台，还在初期，功能待完善。
+一个基于 Spring Boot 的在线免杀生成平台，还在初期，功能待完善。未来将增加更多编程语言的支持。
 
-## 演示
-新版更新拖拽上传方式和一个 nim 免杀模板
+## 特点
 
+- 在线生成
+- 可多个人使用
+- 随机变量名
+- 随机图标
+- 反沙箱
+
+## 开发日志
+
+[免杀-基于 Spring Boot 在线免杀平台开发记录 · yutian's blog](https://yutianqaq.github.io/2023/12/28/免杀-基于-Spring-Boot-在线免杀平台开发记录/)
+
+![demo88](README.assets/demo88.gif)
+
+## 首页
 ![image-20231230225022661](README.assets/0.png)
 
 # 快速体验
 
+## 初次安装
+
 ```
-wget https://github.com/yutianqaq/BypassAV-Online/releases/download/%E5%88%9D%E5%A7%8B%E7%89%88%E6%9C%AC/bypassAVOnline.zip
+wget https://github.com/yutianqaq/BypassAV-Online/releases/download/v1.2/bypassAVOnline.zip
 
 unzip bypassAVOnline.zip
 
@@ -31,27 +45,66 @@ sudo apt install mingw-w64
 java -jar bypass-0.0.1-SNAPSHOT.jar
 ```
 
-测试
+## 前端配置
 
 ```
-curl -X POST -H "Content-Type: application/json" -d '{"code":"0x90", "templateName":"v1"}' http://localhost:8080/v1/compileC
-
-{"code":"200","msg":"操作成功","data":{"downloadLink":"/download/c7af340b-8358-44a3-9985-82189468c36d.exe"}}                                                                                                                                                                                                                                            
-┌──(kali㉿kali)-[~/bypassAVOnline]
-└─$ wget http://localhost:8080/v1/download/c7af340b-8358-44a3-9985-82189468c36d.exe
---2023-12-30 02:16:07--  http://localhost:8080/v1/download/c7af340b-8358-44a3-9985-82189468c36d.exe
-Resolving localhost (localhost)... ::1, 127.0.0.1
-Connecting to localhost (localhost)|::1|:8080... connected.
-HTTP request sent, awaiting response... 200 
-Length: 115534 (113K) [application/octet-stream]
-Saving to: ‘c7af340b-8358-44a3-9985-82189468c36d.exe’
+# 前端
+sudo cp -r dist/assets dist/index.html dist/logo.ico /var/www/html/
+sudo chown -R www-data:www-data /var/www/html
 ```
 
-![image-20231230151703071](README.assets/image-20231230151703071.png)
+输入以下命令，开启模块
 
-# 搭建文档
+```
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod rewrite
+```
 
-springboot 后端、vue 前端。
+编辑 `/etc/apache2/sites-available/000-default.conf` 增加以下配置
+
+```
+        ProxyPass /api http://localhost:8080
+        ProxyPassReverse /api http://localhost:8080
+        <Directory /var/www/html>
+                Options Indexes FollowSymLinks
+                AllowOverride All
+                Require all granted
+        </Directory>
+
+```
+
+![image-20231230213427998](README.assets/image-20231230213427998.png)
+
+重启 Apache 服务器
+
+```
+sudo systemctl restart apache2
+```
+
+至此完成后端，前端配置
+
+## 非初次安装
+
+从 https://github.com/yutianqaq/BypassAV-Online/releases/latest 下载最新发行版
+
+```
+unzip bypassAVOnline.zip
+cd bypassAVOnline
+
+java -jar bypass-0.0.1-SNAPSHOT.jar
+sudo cp -r dist/assets dist/index.html dist/logo.ico /var/www/html/
+sudo chown -R www-data:www-data /var/www/html
+sudo systemctl restart apache2
+```
+
+
+
+
+
+# 从源码构建搭建文档
+
+Spring Boot 后端、Vue 前端。
 
 ## 部署
 
@@ -84,10 +137,16 @@ bypassav:
     v1: v1.c
   templateNIMMapping:
     v1: v1.nim
+    v2: x2Ldr-Plus.nim
   compilerC: x86_64-w64-mingw32-gcc
   compilerNIM: nim
   storageDirector: /home/kali/bypassAVOnline/download
-
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1MB
+      max-request-size: 1MB
 ```
 
 此时后端工作目录结构如下：
@@ -143,24 +202,7 @@ wget http://localhost:8080/v1/download/c7af340b-8358-44a3-9985-82189468c36d.exe
 
 ## 前端页面部署
 
-修改 `.env.production` 中的内容
-
-```
-# 线上环境
-NODE_ENV = 'production'
-
-# 暴露必须以VITE开头才能被Vite识别
-
-VITE_BASE_API = '/api'
-
-# 线上环境接口地址
-VITE_API_URL = 'http://ip:port/'
-
-```
-
-![image-20231230211045449](README.assets/image-20231230211045449.png)
-
-然后输入 `yarn build`，输入以下命令，复制到 Apache 目录
+输入 `yarn build`，然后输入以下命令，复制到 Apache 目录
 
 ```
 sudo cp -r dist/assets dist/index.html dist/logo.ico /var/www/html/
@@ -200,13 +242,9 @@ sudo systemctl restart apache2
 
 
 
-![demo](README.assets/demo2.gif)
-
-
-
 
 # TODO
-- [ ] 优化前端交互
+- [x] 优化前端交互
 - [ ] 增加更多模板
 - [ ] 增加免杀性
 
@@ -216,7 +254,5 @@ sudo systemctl restart apache2
 
 Vue 基础模板：https://github.com/wsheeny/vite-vue-template
 
-## 开发日志
 
-[免杀-基于 Spring Boot 在线免杀平台开发记录 · yutian's blog](https://yutianqaq.github.io/2023/12/28/免杀-基于-Spring-Boot-在线免杀平台开发记录/)
 
