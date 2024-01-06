@@ -2,7 +2,11 @@
 
 # BypassAV-Online
 
+不建议上传沙箱、VT 等
+
 一个基于 Spring Boot 的在线免杀生成平台，还在初期，功能待完善。未来将增加更多编程语言的支持。
+
+新版可过核晶
 
 ![1-6](README.assets/1-6.png)
 
