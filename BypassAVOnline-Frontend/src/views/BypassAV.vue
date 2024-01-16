@@ -274,7 +274,7 @@ export default {
   position: relative;
   max-width: 800px;
   width: 500px;
-  height: 500px;
+  height: 400px;
   margin: 0 auto;
   padding: 100px;
   border: 1px solid #ccc;
