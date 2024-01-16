@@ -18,9 +18,9 @@ public class TextFileProcessorTests {
     @Test
     public void testXorEncrypt() {
         int keyLength = 8;
-        byte[] plaintext = "Hello, World!".getBytes();
-        byte[] key = TextFileProcessor.generateRandomString(keyLength).getBytes();
-
+        byte[] plaintext = "hello".getBytes();
+//        byte[] key = TextFileProcessor.generateRandomString(keyLength).getBytes();
+        byte[] key =  "test".getBytes();
         byte[] encrypted = TextFileProcessor.xorEncrypt(plaintext, key);
         System.out.println("Encrypted: " + TextFileProcessor.convertToHexStringWithPrefix(encrypted));
 

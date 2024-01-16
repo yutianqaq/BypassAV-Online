@@ -9,13 +9,14 @@
       <div class="button-section">
         <el-button @click="showElement1">bin 格式</el-button>
         <el-button @click="showElement2">数组格式</el-button>
-        <el-button @click="showElement3">免责声明</el-button>
+        <el-button @click="showElement3">杀软识别</el-button>
+        <el-button @click="showElement99">免责声明</el-button>
       </div>
       <div class="button-section">
       </div>
       <div v-if="elementToShow === 1">
-        <el-upload class="upload-demo" ref="uploadRef" action="" :limit="1" drag :auto-upload="false" :show-file-list="true" method="post"
-          :multiple="true" :http-request="handleUpload">
+        <el-upload class="upload-demo" ref="uploadRef" action="" :limit="1" drag :auto-upload="false"
+          :show-file-list="true" method="post" :multiple="true" :http-request="handleUpload">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
             将 bin 文件拖拽或 <em>点击这里上传</em>
@@ -31,15 +32,19 @@
             <el-option label="nim" value="nim"></el-option>
             <el-option label="c" value="c"></el-option>
           </el-select>
-          <el-select class="custom-input2" v-if="showSecondSelect" v-model="selectedTemplate" placeholder="选择免杀方式">
+          <el-select class="custom-input1" v-if="showSecondSelect" v-model="selectedTemplate" placeholder="选择免杀方式">
             <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - x2Ldr" value="v2"></el-option>
             <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - Test" value="v1"></el-option>
             <el-option v-if="selectedLanguage === 'c'" label="C加载器 - Test" value="v1"></el-option>
           </el-select>
         </div>
-        <el-button class="button-section" @click="submitUpload" 
-        :disabled="(selectedLanguage === '' || selectedTemplate === '')">Compile
+        <el-button class="button-section" @click="submitUpload"
+          :disabled="(selectedLanguage === '' || selectedTemplate === '')">Compile
         </el-button>
+        <div class="result-section">
+          <el-button class="button-section" @click="handleDownload"
+            :disabled="compilationResult === ''">Download</el-button>
+        </div>
       </div>
 
       <div v-if="elementToShow === 2">
@@ -52,29 +57,29 @@
             <el-option label="nim" value="nim"></el-option>
             <el-option label="c" value="c"></el-option>
           </el-select>
-          <el-select class="custom-input2" v-if="showSecondSelect" v-model="selectedTemplate" placeholder="选择免杀方式">
+          <el-select class="custom-input1" v-if="showSecondSelect" v-model="selectedTemplate" placeholder="选择免杀方式">
             <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - x2Ldr" value="v2"></el-option>
             <el-option v-if="selectedLanguage === 'nim'" label="Nim加载器 - Test" value="v1"></el-option>
             <el-option v-if="selectedLanguage === 'c'" label="C加载器 - Test" value="v1"></el-option>
           </el-select>
         </div>
         <el-button class="button-section" @click="handleCompile"
-        :disabled="!(selectedLanguage === '' || selectedTemplate !== '')">Compile</el-button>
+          :disabled="!(selectedLanguage === '' || selectedTemplate !== '')">Compile</el-button>
+        <div class="result-section">
+          <el-button class="button-section" @click="handleDownload"
+            :disabled="compilationResult === ''">Download</el-button>
+        </div>
       </div>
 
       <div v-if="elementToShow === 3">
+        <ProcessValueLookup />
+      </div>
+
+      <div v-if="elementToShow === 99">
         <p>
           本工具仅供安全研究和教学目的使用，用户须自行承担因使用该工具而引起的一切法律及相关责任。作者概不对任何法律责任承担责任，且保留随时中止、修改或终止本工具的权利。使用者应当遵循当地法律法规，并理解并同意本声明的所有内容。
-        </p>  
+        </p>
       </div>
-
-
-
-      <div class="result-section">
-        <el-button class="button-section" @click="handleDownload"
-          :disabled="compilationResult === ''">Download</el-button>
-      </div>
-
     </div>
     <el-footer class="footer">
       <p>&copy; 2023 在线免杀平台, powered by <a href="https://github.com/yutianqaq">Yutian</a></p>
@@ -83,6 +88,7 @@
 </template>
 
 <script>
+import ProcessValueLookup from '@/components/ProcessValueLookup.vue';
 import { fetchCompile, fetchDownloadLink, fetchCompileUpload } from '../api/compile.js';
 import { ElNotification, ElUpload, } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue';
@@ -105,6 +111,9 @@ const open4 = () => {
 
 export default {
   name: 'BypassAV',
+  components: {
+    ProcessValueLookup,
+  },
   data() {
     return {
       code: '',
@@ -148,6 +157,10 @@ export default {
     },
     showElement3() {
       this.elementToShow = 3;
+      this.resetAllOption();
+    },
+    showElement99() {
+      this.elementToShow = 99;
       this.resetAllOption();
     },
     async fetchCompileData(endpoint, data) {
@@ -260,8 +273,8 @@ export default {
 .compiler-container {
   position: relative;
   max-width: 800px;
-  width: 800px;
-  height: 450px;
+  width: 500px;
+  height: 500px;
   margin: 0 auto;
   padding: 100px;
   border: 1px solid #ccc;
@@ -288,21 +301,19 @@ export default {
 }
 
 .custom-input1 {
-  text-align: center;
-  width: 480px;
-}
-
-.custom-input2 {
   margin: 10px;
   width: 480px;
 }
+
 
 .select-section {
   margin: 10px;
 }
-.button-section{
+
+.button-section {
   margin: 10px;
 }
+
 .result-section {
   margin-bottom: 40px;
 }

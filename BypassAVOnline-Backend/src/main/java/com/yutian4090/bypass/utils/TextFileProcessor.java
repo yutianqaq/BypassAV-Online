@@ -53,7 +53,6 @@ public class TextFileProcessor {
 
     private static String processCTemplate(String code, String processedCode) {
         byte[] key = generateRandomString(8).getBytes();
-        String randomICON = FileProcessor.getRandomFileName();
         code = TextFileProcessor.convertToHexStringWithPrefix(xorEncrypt(convertHexStringToByteArray(code), key));
         return processedCode.replace(TEMPLATE_KEY_PLACEHOLDER, convertToHexStringWithPrefix(key))
                 .replace(TEMPLATE_LEN_PLACEHOLDER, String.valueOf(countCommas(code) + 1))
