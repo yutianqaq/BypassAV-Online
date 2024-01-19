@@ -2,6 +2,8 @@
 
 # BypassAV-Online
 
+🚧：优化代码，提高可读性，设计架构中...预计3周
+
 不建议上传沙箱、virustotal 等。
 
 默认密码：yutian [搭建指南](https://github.com/yutianqaq/BypassAV-Online/wiki)
