@@ -2,7 +2,11 @@
 
 # BypassAV-Online
 
-🚧：优化代码，提高可读性，设计架构中...预计3周
+~~🚧：优化代码，提高可读性，设计架构中...预计3周~~
+新版已经开发完成，请移步https://github.com/yutianqaq/AVEvasionCraftOnline
+**初期代码设计不足，难以维护与扩展，现已开发新版本**
+
+留此仓库纪念初版
 
 不建议上传沙箱、virustotal 等。
 
